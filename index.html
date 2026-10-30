@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#15241a" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta
+      name="description"
+      content="Clover Hollow — a quiet sandbox where you are a rabbit with soft, living fur. Built entirely from procedural GLB in Three.js."
+    />
+    <title>Clover Hollow — a rabbit's sandbox</title>
+  </head>
+  <body>
+    <div id="app">
+      <canvas id="scene" aria-label="A meadow with a rabbit"></canvas>
+      <div class="vignette"></div>
+
+      <header id="hud">
+        <div class="brand" data-ui>
+          <div class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 32 32" fill="none">
+              <path
+                d="M10.4 16.5c-1.4-3.4-1.5-7.3-.3-8.6 1-1.1 2.2-.2 2.9 2.2.3 1 .5 2 .6 2.9M21.6 16.5c1.4-3.4 1.5-7.3.3-8.6-1-1.1-2.2-.2-2.9 2.2-.3 1-.5 2-.6 2.9"
+                stroke="currentColor"
+                stroke-width="1.7"
+                stroke-linecap="round"
+              />
+              <path
+                d="M16 27c-4.7 0-8.3-3.3-8.3-7.6 0-4.1 3.5-7.4 8.3-7.4s8.3 3.3 8.3 7.4C24.3 23.7 20.7 27 16 27Z"
+                fill="currentColor"
+              />
+              <circle cx="12.8" cy="18.2" r="1.05" fill="#243a28" />
+              <circle cx="19.2" cy="18.2" r="1.05" fill="#243a28" />
+              <path d="M14.4 21.2c1 .7 2.2.7 3.2 0" stroke="#243a28" stroke-width="1.1" stroke-linecap="round" />
+            </svg>
+          </div>
+          <div class="brand-text">
+            <h1>Clover Hollow</h1>
+            <p>a rabbit's sandbox</p>
+          </div>
+        </div>
+
+        <div class="hud-actions">
+          <button id="btnTilt" class="orb" data-ui aria-label="Toggle tilt controls" aria-pressed="false" title="Tilt controls">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <rect x="8.2" y="3.6" width="7.6" height="16.8" rx="2.1" stroke="currentColor" stroke-width="1.5" />
+              <path d="M5 8.4a7.6 7.6 0 0 0 0 7.2M19 8.4a7.6 7.6 0 0 1 0 7.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+              <circle cx="12" cy="12" r="1.4" fill="currentColor" />
+            </svg>
+          </button>
+          <button id="btnTime" class="orb" data-ui aria-label="Change time of day" title="Time of day">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.5" />
+              <path
+                d="M12 2.6v2.1M12 19.3v2.1M2.6 12h2.1M19.3 12h2.1M5.3 5.3l1.5 1.5M17.2 17.2l1.5 1.5M18.7 5.3l-1.5 1.5M6.8 17.2l-1.5 1.5"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+              />
+            </svg>
+          </button>
+          <button id="btnSound" class="orb" data-ui aria-label="Toggle sound" aria-pressed="true" title="Sound">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M4 9.6v4.8h3.2L12 18.4V5.6L7.2 9.6H4Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
+              <path class="wave" d="M15.2 9a4.2 4.2 0 0 1 0 6M17.8 6.6a7.6 7.6 0 0 1 0 10.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+            </svg>
+          </button>
+          <button id="btnReset" class="orb" data-ui aria-label="Return to the trail" title="Back to the trail">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M19.4 8.2A8 8 0 1 0 20 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+              <path d="M19.6 4.4v4.2h-4.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <div id="hint" class="hint" aria-hidden="true"></div>
+
+      <div id="stick" class="stick" aria-hidden="true">
+        <div class="stick-ring"></div>
+        <div id="stickKnob" class="stick-knob"></div>
+      </div>
+
+      <div class="actions">
+        <button id="btnSniff" class="action action-sniff" data-ui>
+          <span class="action-label">Sniff</span>
+        </button>
+        <button id="btnHop" class="action action-hop" data-ui>
+          <span class="action-label">Pounce</span>
+        </button>
+      </div>
+
+      <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+      <div id="loading" class="loading">
+        <div class="loading-inner">
+          <div class="loading-mark" aria-hidden="true">
+            <svg viewBox="0 0 64 64" fill="none">
+              <path
+                d="M23 32c-2.8-7-3-14.6-.5-17.2 2-2.2 4.4-.5 5.8 4.4.6 2 .9 4 1.1 5.8M41 32c2.8-7 3-14.6.5-17.2-2-2.2-4.4-.5-5.8 4.4-.6 2-.9 4-1.1 5.8"
+                stroke="currentColor"
+                stroke-width="2.2"
+                stroke-linecap="round"
+              />
+              <path
+                d="M32 57c-9.4 0-16.6-6.6-16.6-15.2 0-8.2 7-14.8 16.6-14.8s16.6 6.6 16.6 14.8C48.6 50.4 41.4 57 32 57Z"
+                fill="currentColor"
+              />
+              <circle cx="25.6" cy="39.4" r="2" fill="#1c3022" />
+              <circle cx="38.4" cy="39.4" r="2" fill="#1c3022" />
+              <path d="M28.6 45c2 1.5 4.8 1.5 6.8 0" stroke="#1c3022" stroke-width="2" stroke-linecap="round" />
+            </svg>
+          </div>
+          <p class="loading-eyebrow">a small, unhurried world</p>
+          <h1 class="loading-title">Clover Hollow</h1>
+          <p class="loading-sub">You are a rabbit. There is nothing to win.</p>
+
+          <div class="loading-bar"><div id="loadBar"></div></div>
+          <div class="loading-meta">
+            <span id="loadStatus">waking the meadow</span>
+            <span id="loadingPct">0%</span>
+          </div>
+          <p class="loading-foot">
+            Every hair is grown at runtime, then packed into a real binary glTF.
+          </p>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
