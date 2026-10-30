@@ -1,0 +1,28 @@
+{
+  "name": "thistledown",
+  "version": "1.0.0",
+  "description": "A quiet, objective-free meadow where you are a hare.",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0 --port 3000",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0 --port 3000",
+    "generate:hare": "node scripts/generate_rabbit.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bibizando2012-dotcom/PlayGround.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bibizando2012-dotcom/PlayGround/issues"
+  },
+  "homepage": "https://github.com/bibizando2012-dotcom/PlayGround#readme",
+  "dependencies": {
+    "three": "^0.187.0"
+  },
+  "devDependencies": {
+    "vite": "^8.3.5"
+  }
+}
