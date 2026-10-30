@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no" />
+    <meta name="theme-color" content="#1d2619" />
+    <meta name="description" content="Clover Hollow — a quiet 3D meadow where you are a rabbit. No goals. Just grass, light, and a little wind." />
+    <title>Clover Hollow — a quiet rabbit sandbox</title>
+    <link rel="preload" href="/models/rabbit.glb" as="fetch" crossorigin />
+  </head>
+  <body>
+    <div id="app">
+      <canvas id="scene" aria-label="A sunlit meadow with a realistic rabbit"></canvas>
+
+      <div class="grade" aria-hidden="true"></div>
+      <div class="vignette" aria-hidden="true"></div>
+
+      <header class="brand" id="brand" aria-hidden="true">
+        <span class="brand-mark">
+          <svg viewBox="0 0 24 24" role="presentation">
+            <path d="M12 21c-4.1 0-7-2.7-7-6.4 0-3.2 2.2-5.7 4.2-6.3C10.1 7.1 9.4 3 11.2 3c1.4 0 1.5 2.5 1.4 4.4-.1 1.4-.4 2.4-.4 2.4s1.8-2.4 3-3.5c.9-.8 2.2-.6 2.4.5.2 1-.9 2.5-2.3 3.7-.9.8-1.7 1.4-1.7 1.4 1.5-.2 3.3.4 4.4 1.8 1.3 1.7 1 3.9-.2 5.2C16.5 20.2 14.4 21 12 21Z" />
+          </svg>
+        </span>
+        <span class="brand-copy">
+          <strong>Clover Hollow</strong>
+          <small>no tasks · just meadow</small>
+        </span>
+      </header>
+
+      <div class="top-actions" id="topActions">
+        <button class="icon-button" id="motionToggle" type="button" aria-label="Enable tilt steering" aria-pressed="false" title="Tilt to steer">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2.4"/><path d="M10 5.2h4M10.8 18.4h2.4"/><path d="M2.8 9.5c-.9 1.7-.9 3.3 0 5M21.2 9.5c.9 1.7.9 3.3 0 5"/></svg>
+          <span>Tilt</span>
+        </button>
+        <button class="icon-button" id="soundToggle" type="button" aria-label="Toggle sound" aria-pressed="true" title="Sound">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9.2h3.2L12.4 5v14l-4.2-4.2H5z"/><path class="sound-wave" d="M15.5 9c1.1 1.5 1.1 4.5 0 6M18.4 6.4c2.4 3 2.4 8.2 0 11.2"/></svg>
+          <span class="sr-only">Sound</span>
+        </button>
+        <button class="icon-button" id="infoButton" type="button" aria-label="About and controls" title="About">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 10.8v6M12 7.3v.2"/></svg>
+          <span class="sr-only">About</span>
+        </button>
+      </div>
+
+      <div class="loading" id="loading" role="status" aria-live="polite">
+        <div class="loading-inner">
+          <div class="loading-ears" aria-hidden="true"><i></i><i></i></div>
+          <p class="eyebrow">Growing the meadow</p>
+          <div class="loading-track"><span id="loadingBar"></span></div>
+          <p class="loading-percent" id="loadingPercent">0%</p>
+        </div>
+      </div>
+
+      <section class="intro" id="intro" aria-labelledby="introTitle">
+        <div class="intro-shade" aria-hidden="true"></div>
+        <div class="intro-content">
+          <p class="eyebrow reveal">A quiet little sandbox</p>
+          <h1 id="introTitle" class="reveal">Clover<br /><em>Hollow</em></h1>
+          <p class="intro-lede reveal">You are a rabbit with soft fur, tall ears, and nowhere at all to be.</p>
+          <div class="intro-action reveal">
+            <button class="enter-button" id="enterButton" type="button" disabled>
+              <span>Wander in</span>
+              <svg viewBox="0 0 28 12" aria-hidden="true"><path d="M1 6h24M19 1l6 5-6 5"/></svg>
+            </button>
+            <p class="intro-note">No goals. No score. Stay as long as you like.</p>
+          </div>
+          <div class="intro-meta reveal">
+            <span><i class="dot"></i> Golden hour</span>
+            <span>Headphones recommended</span>
+          </div>
+        </div>
+        <p class="intro-side" aria-hidden="true">Somewhere between the hedgerows · 18:42</p>
+      </section>
+
+      <div class="hud" id="hud" aria-hidden="true">
+        <div class="joystick-wrap" id="joystickWrap">
+          <div class="joystick" id="joystick" aria-label="Movement joystick" role="application">
+            <span class="joystick-ring"></span>
+            <span class="joystick-cross"></span>
+            <span class="joystick-knob" id="joystickKnob"></span>
+          </div>
+          <span class="control-caption">drift</span>
+        </div>
+
+        <div class="action-cluster">
+          <button class="hop-button" id="hopButton" type="button" aria-label="Hop">
+            <span class="hop-ripple" aria-hidden="true"></span>
+            <svg viewBox="0 0 30 34" aria-hidden="true">
+              <path d="M9.5 25.5c-1.7-3.3-1.5-7.7.8-11.1 2-3 5.6-5.2 9.1-3.8 4.4 1.7 5.2 7.6 2.9 11.5-2 3.4-6 5.1-9.6 4.1" />
+              <path d="M9.9 14.2c-1.9-3.5-3.1-7.5-1.3-8.6 2.3-1.4 4.3 4.4 4.6 7.1M18.2 13.2c.5-3.8 2-8 4.2-7.5 2.5.6.8 6.9-.2 9.4" />
+              <path d="M12.5 24.4c1.2-.4 2.4.5 2.1 1.9" />
+            </svg>
+            <span>hop</span>
+          </button>
+          <span class="control-caption">or tap the meadow</span>
+        </div>
+
+        <div class="camera-hint" id="cameraHint">
+          <span class="hint-line" aria-hidden="true"></span>
+          Drag to look · pinch to come closer
+        </div>
+
+        <div class="desktop-hint" id="desktopHint">
+          <span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> wander</span>
+          <span><kbd>space</kbd> hop</span>
+          <span>drag to look</span>
+        </div>
+
+        <button class="small-control" id="recenterButton" type="button" aria-label="Recenter camera">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10V4h6M20 14v6h-6M20 10V4h-6M4 14v6h6"/></svg>
+          <span>recenter</span>
+        </button>
+      </div>
+
+      <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+      <aside class="panel" id="infoPanel" aria-hidden="true" aria-labelledby="infoTitle">
+        <div class="panel-scrim" data-close-panel></div>
+        <div class="panel-card">
+          <button class="panel-close" type="button" aria-label="Close" data-close-panel>
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m4 4 12 12M16 4 4 16"/></svg>
+          </button>
+          <p class="eyebrow">About the hollow</p>
+          <h2 id="infoTitle">Nothing to do.<br /><em>Everything to notice.</em></h2>
+          <p class="panel-lede">There is no quest here, no counter, and no ending. Wander the long grass, watch the light move, or simply sit with the wind.</p>
+
+          <div class="panel-grid">
+            <div>
+              <h3>On touch</h3>
+              <ul>
+                <li><b>Left thumb</b> — drift through the meadow</li>
+                <li><b>Right drag</b> — look around</li>
+                <li><b>Pinch</b> — move the camera in or out</li>
+                <li><b>Hop</b> — a small, joyful lift</li>
+              </ul>
+            </div>
+            <div>
+              <h3>On keyboard</h3>
+              <ul>
+                <li><b>W A S D</b> — wander</li>
+                <li><b>Space</b> — hop</li>
+                <li><b>Mouse drag</b> — look</li>
+                <li><b>Scroll</b> — zoom</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="tilt-row">
+            <div>
+              <h3>Tilt to steer</h3>
+              <p>Use your device's motion sensors as a gentle steering assist. On iPhone and iPad, permission is requested only when you switch it on.</p>
+            </div>
+            <button class="switch" id="motionSwitch" type="button" role="switch" aria-checked="false" aria-label="Tilt to steer">
+              <span></span>
+            </button>
+          </div>
+
+          <div class="credits">
+            <p><b>Rabbit</b> — “RABBIT - Realistic 3D Model (DEMO FREE)” by <a href="https://sketchfab.com/WildMesh_3D" target="_blank" rel="noreferrer">WildMesh 3D</a>, licensed <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noreferrer">CC BY-NC 4.0</a>. Fine fur added with a real-time shell-fur shader.</p>
+            <p><b>The hollow</b> — terrain, grass, flowers, trees, sky, sound, and motion made procedurally in the browser. No two breezes are quite the same.</p>
+          </div>
+        </div>
+      </aside>
+
+      <div class="rotate-note" id="rotateNote">
+        <span>Turn your device for a wider meadow</span>
+      </div>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
