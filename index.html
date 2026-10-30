@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#050808" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="description" content="HOLLOWFALL — a folk horror descent. Gather the three bells before the Warden finds you." />
+  <title>HOLLOWFALL — a folk horror descent</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23050808'/%3E%3Cpath d='M16 5c-4 0-6 3-6 8v5l-2 3h16l-2-3v-5c0-5-2-8-6-8z' fill='%23e9e2d0'/%3E%3Ccircle cx='16' cy='25' r='2' fill='%23e9e2d0'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <canvas id="scene" aria-label="Hollowfall game world"></canvas>
+
+  <div class="fx fx-vignette" aria-hidden="true"></div>
+  <div class="fx fx-fear" id="fx-fear" aria-hidden="true"></div>
+  <div class="fx fx-grain" id="fx-grain" aria-hidden="true"></div>
+  <div class="fx fx-glitch" id="fx-glitch" aria-hidden="true"></div>
+  <div class="fx fx-flash" id="fx-flash" aria-hidden="true"></div>
+
+  <div id="loading" class="loading">
+    <div class="loading-mark">H</div>
+    <div class="loading-text">The hollow is waking</div>
+  </div>
+
+  <!-- ============ IN-GAME HUD ============ -->
+  <div id="hud" class="hud hidden" aria-live="polite">
+    <div class="hud-compass" id="compass">
+      <div class="compass-rail"></div>
+      <div class="compass-tick" id="tick-0">N</div>
+      <div class="compass-tick" id="tick-1">E</div>
+      <div class="compass-tick" id="tick-2">S</div>
+      <div class="compass-tick" id="tick-3">W</div>
+      <div class="compass-mark" id="compass-objective" aria-hidden="true"></div>
+      <div class="compass-needle"></div>
+    </div>
+
+    <div class="hud-objective">
+      <div class="objective-kicker">THE HOLLOW GATE</div>
+      <div class="objective-title" id="objective-title">Gather the bells</div>
+      <div class="objective-row">
+        <div class="bell-pips" id="bell-pips">
+          <span class="bell-pip"></span><span class="bell-pip"></span><span class="bell-pip"></span>
+        </div>
+        <span class="objective-count" id="objective-count">0 / 3</span>
+      </div>
+    </div>
+
+    <div class="hud-meters">
+      <div class="meter meter-oil">
+        <div class="meter-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M9 3h6M10 3v3.2c0 .8-2.5 2-2.5 4.6V19a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1v-8.2c0-2.6-2.5-3.8-2.5-4.6V3" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M10 12h4v5h-4z" fill="currentColor" opacity=".5"/></svg>
+        </div>
+        <div class="meter-body"><div class="meter-fill" id="oil-fill"></div></div>
+        <span class="meter-label">OIL</span>
+      </div>
+      <div class="meter meter-stamina">
+        <div class="meter-body"><div class="meter-fill" id="stamina-fill"></div></div>
+        <span class="meter-label">BREATH</span>
+      </div>
+      <button class="icon-btn" id="btn-pause" aria-label="Pause game">
+        <svg viewBox="0 0 24 24"><path d="M8 5v14M16 5v14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+
+    <div class="reticle" id="reticle" aria-hidden="true"><span></span></div>
+
+    <div class="subtitle" id="subtitle"></div>
+    <div class="prompt" id="prompt"></div>
+
+    <div class="hud-lantern-hint" id="lantern-hint">LANTERN OFF · YOU ARE HARDER TO HEAR</div>
+
+    <div id="touch-controls" class="touch-controls">
+      <div class="joystick" id="joystick" aria-label="Movement joystick">
+        <div class="joystick-ring"></div>
+        <div class="joystick-cross"></div>
+        <div class="joystick-knob" id="joystick-knob"></div>
+      </div>
+
+      <div class="action-cluster">
+        <button class="action-btn action-sprint" id="btn-sprint" aria-label="Sprint">
+          <span class="action-icon">
+            <svg viewBox="0 0 24 24"><path d="M5 8h6l-3 4h6l-3 4h7M15 8h4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          <span class="action-label">RUN</span>
+        </button>
+        <button class="action-btn action-lamp" id="btn-lamp" aria-label="Toggle lantern">
+          <span class="action-icon">
+            <svg viewBox="0 0 24 24"><path d="M9 3h6M10 3v3c0 .9-2.5 2-2.5 4.5V19h9v-8.5C16.5 8 14 6.9 14 6V3" fill="none" stroke="currentColor" stroke-width="1.1"/><path d="M10.5 12h3v4h-3z" fill="currentColor"/></svg>
+          </span>
+          <span class="action-label">LAMP</span>
+        </button>
+        <button class="action-btn action-use" id="btn-use" aria-label="Interact">
+          <span class="action-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="6.5" fill="none" stroke="currentColor" stroke-width="1" opacity=".45"/><circle cx="12" cy="12" r="2.4" fill="currentColor"/></svg>
+          </span>
+          <span class="action-label">USE</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="desktop-hints" id="desktop-hints">
+      <span><b>WASD</b> move</span><span><b>MOUSE</b> look</span><span><b>SHIFT</b> run</span><span><b>F</b> lamp</span><span><b>E</b> use</span><span><b>ESC</b> pause</span>
+    </div>
+    <div class="lock-hint" id="lock-hint">CLICK TO TAKE THE LIGHT</div>
+
+    <div class="threat-word" id="threat-word">DON'T LET IT NEAR</div>
+  </div>
+
+  <!-- ============ TITLE ============ -->
+  <section id="title-screen" class="overlay title-screen">
+    <div class="title-scrim"></div>
+    <div class="title-inner">
+      <div class="title-topline"><span>AN ORIGINAL NIGHTMARE</span><span class="title-rule"></span><span>THE VALE · 03:17</span></div>
+
+      <div class="title-lockup">
+        <h1 class="logo" aria-label="Hollowfall">
+          <span>HOLLOW</span><span class="logo-thin">FALL</span>
+        </h1>
+        <div class="logo-sub"><span></span>A FOLK HORROR DESCENT<span></span></div>
+        <p class="tagline">The bells are under the earth.<br />Something down there is ringing them.</p>
+      </div>
+
+      <div class="title-actions">
+        <button id="btn-start" class="btn btn-primary" aria-label="Start">
+          <span class="btn-ornament" aria-hidden="true"></span>
+          <span>ENTER THE VALE</span>
+          <span class="btn-ornament" aria-hidden="true"></span>
+        </button>
+
+        <div class="title-options">
+          <button class="switch-row" id="btn-tilt-title" role="switch" aria-checked="false">
+            <span class="switch-copy"><span class="switch-title">TILT TO LOOK</span><span class="switch-desc" id="tilt-desc">Uses your device's motion sensor</span></span>
+            <span class="switch-track"><span class="switch-knob"></span></span>
+          </button>
+          <button class="switch-row" id="btn-sound-title" role="switch" aria-checked="true">
+            <span class="switch-copy"><span class="switch-title">SOUND</span><span class="switch-desc">Headphones are strongly advised</span></span>
+            <span class="switch-track"><span class="switch-knob"></span></span>
+          </button>
+        </div>
+
+        <div class="control-legend">
+          <span class="legend-item legend-touch-only"><i class="legend-touch"></i>LEFT THUMB — MOVE</span>
+          <span class="legend-item legend-touch-only"><i class="legend-touch"></i>RIGHT THUMB — LOOK</span>
+          <span class="legend-item legend-wide">WASD · MOUSE · E · F · SHIFT</span>
+        </div>
+      </div>
+
+      <div class="title-footer">
+        <span>BEST WITH SOUND</span>
+        <span class="footer-mid">A 5–10 MINUTE DESCENT</span>
+        <span>NOT SUITABLE FOR CHILDREN</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PAUSE ============ -->
+  <section id="pause-screen" class="overlay pause-screen hidden">
+    <div class="panel">
+      <div class="panel-kicker">THE VALE WAITS</div>
+      <h2 class="panel-title">PAUSED</h2>
+      <div class="panel-rule"></div>
+      <button id="btn-resume" class="btn btn-panel">RETURN TO THE DARK</button>
+      <button id="btn-tilt-pause" class="switch-row panel-switch" role="switch" aria-checked="false">
+        <span class="switch-copy"><span class="switch-title">TILT TO LOOK</span><span class="switch-desc" id="tilt-desc-pause">Optional motion control</span></span>
+        <span class="switch-track"><span class="switch-knob"></span></span>
+      </button>
+      <button id="btn-sound-pause" class="switch-row panel-switch" role="switch" aria-checked="true">
+        <span class="switch-copy"><span class="switch-title">SOUND</span><span class="switch-desc">Drone, whispers, heartbeat</span></span>
+        <span class="switch-track"><span class="switch-knob"></span></span>
+      </button>
+      <button id="btn-restart-pause" class="btn btn-ghost">RESTART THE DESCENT</button>
+      <p class="panel-note">Your lantern draws it closer. Your silence keeps you alive.</p>
+    </div>
+  </section>
+
+  <!-- ============ DEATH ============ -->
+  <section id="death-screen" class="overlay death-screen hidden">
+    <div class="death-noise"></div>
+    <div class="death-inner">
+      <div class="death-kicker">THE VALE REMEMBERS</div>
+      <h2 class="death-title" data-text="IT FOUND YOU">IT FOUND YOU</h2>
+      <p class="death-copy">You looked away for one heartbeat too long.</p>
+      <div class="death-stats" id="death-stats"></div>
+      <button id="btn-retry" class="btn btn-primary btn-death"><span>RISE AGAIN</span></button>
+      <button id="btn-title-death" class="btn btn-ghost">ABANDON THE DESCENT</button>
+    </div>
+  </section>
+
+  <!-- ============ WIN ============ -->
+  <section id="win-screen" class="overlay win-screen hidden">
+    <div class="win-light"></div>
+    <div class="win-inner">
+      <div class="win-kicker">DAYBREAK · THE BELLS ARE QUIET</div>
+      <h2 class="win-title">YOU LEFT<br /><em>THE HOLLOW</em></h2>
+      <p class="win-copy">For now. The vale does not forget a name.</p>
+      <div class="win-stats" id="win-stats"></div>
+      <button id="btn-again" class="btn btn-primary"><span>DESCEND AGAIN</span></button>
+      <button id="btn-title-win" class="btn btn-ghost">RETURN TO THE TITLE</button>
+    </div>
+  </section>
+
+  <div id="toast" class="toast" role="status"></div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
