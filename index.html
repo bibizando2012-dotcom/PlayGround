@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+  <meta name="theme-color" content="#080b10">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="description" content="Swap Chess — every capture rewrites the board. A mobile-first chess variant with touch controls and optional tilt view.">
+  <meta name="color-scheme" content="dark">
+  <meta property="og:title" content="Swap Chess — every capture rewrites the board">
+  <meta property="og:description" content="A touch-first chess variant where every capture transfers the fallen piece's power.">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <title>Swap Chess — every capture rewrites the board</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <svg class="svg-sprite" aria-hidden="true" focusable="false">
+    <defs>
+      <symbol id="sym-p" viewBox="0 0 100 100">
+        <g stroke="var(--piece-line)" stroke-width="2.4" stroke-linejoin="round">
+          <circle cx="50" cy="26" r="12" fill="currentColor"/>
+          <path d="M40 39h20c0 10 3 18 9 24l2 4H29l2-4c6-6 9-14 9-24Z" fill="currentColor"/>
+          <path d="M34 67h32l4 10H30z" fill="currentColor"/>
+          <path d="M27 77h46l5 12H22z" fill="currentColor"/>
+          <path d="M38 30c2-4 6-6 10-6" fill="none" stroke="var(--piece-highlight)" stroke-width="2" opacity=".7"/>
+        </g>
+      </symbol>
+      <symbol id="sym-r" viewBox="0 0 100 100">
+        <g stroke="var(--piece-line)" stroke-width="2.4" stroke-linejoin="round">
+          <path d="M27 17h10v8h8v-8h10v8h8v-8h10v20l-5 6v27h5l4 10H24l4-10h5V43l-5-6V17Z" fill="currentColor"/>
+          <path d="M34 77h32" fill="none" opacity=".65"/>
+          <path d="M37 29v9M63 29v9" fill="none" opacity=".65"/>
+          <path d="M31 24h38" fill="none" stroke="var(--piece-highlight)" stroke-width="2" opacity=".55"/>
+        </g>
+      </symbol>
+      <symbol id="sym-n" viewBox="0 0 100 100">
+        <g stroke="var(--piece-line)" stroke-width="2.4" stroke-linejoin="round">
+          <path d="M38 80c0-11 4-20 14-27-7 1-12-3-13-10-1-8 4-15 13-18l10-4-2-10 9 7 5-4 2 9c9 4 15 12 15 22 0 10-5 18-13 24l-2 2 1 9H38Z" fill="currentColor"/>
+          <path d="M31 80h48l5 11H26z" fill="currentColor"/>
+          <circle cx="70" cy="38" r="2.6" fill="var(--piece-line)" stroke="none"/>
+          <path d="M50 53c4-5 9-8 15-9" fill="none" opacity=".65"/>
+          <path d="M48 30c-3 6-2 11 3 15" fill="none" stroke="var(--piece-highlight)" stroke-width="2" opacity=".65"/>
+        </g>
+      </symbol>
+      <symbol id="sym-b" viewBox="0 0 100 100">
+        <g stroke="var(--piece-line)" stroke-width="2.4" stroke-linejoin="round">
+          <path d="M50 13c-5 6-7 11-7 17 0 4 2 7 5 9l-7 8h18l-7-8c3-2 5-5 5-9 0-6-2-11-7-17Z" fill="currentColor"/>
+          <path d="M43 47h14l3 14H40z" fill="currentColor"/>
+          <path d="M36 61h28l4 12H32z" fill="currentColor"/>
+          <path d="M27 73h46l5 11H22z" fill="currentColor"/>
+          <path d="M50 23v12" fill="none" opacity=".7"/>
+          <circle cx="50" cy="19" r="2.4" fill="var(--piece-line)" stroke="none"/>
+          <path d="M42 24c1-4 4-7 8-9" fill="none" stroke="var(--piece-highlight)" stroke-width="2" opacity=".7"/>
+        </g>
+      </symbol>
+      <symbol id="sym-q" viewBox="0 0 100 100">
+        <g stroke="var(--piece-line)" stroke-width="2.4" stroke-linejoin="round">
+          <circle cx="24" cy="28" r="4.5" fill="currentColor"/>
+          <circle cx="50" cy="19" r="4.5" fill="currentColor"/>
+          <circle cx="76" cy="28" r="4.5" fill="currentColor"/>
+          <path d="M25 31 31 64h38l6-33-15 14-10-24-10 24z" fill="currentColor"/>
+          <path d="M37 64h26l4 12H33z" fill="currentColor"/>
+          <path d="M29 76h42l5 9H24z" fill="currentColor"/>
+          <path d="M36 48h28" fill="none" opacity=".55"/>
+          <path d="M31 34c1-2 3-3 5-3" fill="none" stroke="var(--piece-highlight)" stroke-width="2" opacity=".65"/>
+        </g>
+      </symbol>
+      <symbol id="sym-k" viewBox="0 0 100 100">
+        <g stroke="var(--piece-line)" stroke-width="2.4" stroke-linejoin="round">
+          <path d="M45 7h10v10h10v9H55v11h-10V26H35v-9h10z" fill="currentColor"/>
+          <path d="M30 46c0-9 6-15 14-15 3 0 5 1 6 3 1-2 3-3 6-3 8 0 14 6 14 15l-4 18H34z" fill="currentColor"/>
+          <path d="M36 64h28l4 12H32z" fill="currentColor"/>
+          <path d="M28 76h44l5 9H23z" fill="currentColor"/>
+          <path d="M39 45h22" fill="none" opacity=".55"/>
+          <path d="M35 38c1-5 5-8 10-9" fill="none" stroke="var(--piece-highlight)" stroke-width="2" opacity=".65"/>
+        </g>
+      </symbol>
+    </defs>
+  </svg>
+
+  <div class="app" id="app">
+    <div class="ambient ambient-a"></div>
+    <div class="ambient ambient-b"></div>
+    <div class="grain" aria-hidden="true"></div>
+
+    <header class="topbar">
+      <div class="brand" aria-label="Swap Chess">
+        <span class="brand-mark" aria-hidden="true">
+          <span class="brand-mark-inner">S</span>
+        </span>
+        <span class="brand-copy">
+          <span class="brand-name">SWAP</span>
+          <span class="brand-sub">CHESS</span>
+        </span>
+      </div>
+
+      <div class="match-pill" id="matchPill">
+        <span class="status-dot" aria-hidden="true"></span>
+        <span id="matchPillText">Your move</span>
+      </div>
+
+      <div class="top-actions">
+        <button class="icon-btn" id="soundBtn" type="button" aria-label="Mute sound" aria-pressed="false">
+          <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4Z" fill="currentColor"/><path class="sound-wave" d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        </button>
+        <button class="icon-btn" id="settingsBtn" type="button" aria-label="Settings">
+          <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8.4a3.6 3.6 0 1 0 0 7.2 3.6 3.6 0 0 0 0-7.2Z" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="m19.4 13.6 1.2 1-.9 2.2-1.6-.2a7.7 7.7 0 0 1-1.5 1.5l.2 1.6-2.2.9-1-1.2a7.5 7.5 0 0 1-2.1.1l-.9 1.3-2.2-.8v-1.7a7.7 7.7 0 0 1-1.6-1.4l-1.6.3-.9-2.2 1.2-1a7.6 7.6 0 0 1 0-2.2l-1.2-1 .9-2.2 1.6.2A7.7 7.7 0 0 1 7.7 7l-.2-1.6 2.2-.9 1 1.2a7.5 7.5 0 0 1 2.1-.1l.9-1.3 2.2.8v1.7a7.7 7.7 0 0 1 1.6 1.4l1.6-.3.9 2.2-1.2 1a7.6 7.6 0 0 1 0 2.5Z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="game-shell">
+      <section class="board-column" aria-label="Game board">
+        <div class="player-bar player-black" id="barBlack">
+          <div class="player-avatar black-avatar" aria-hidden="true">
+            <svg class="avatar-svg" viewBox="0 0 100 100"><use href="#sym-n"></use></svg>
+          </div>
+          <div class="player-meta">
+            <span class="player-name" id="blackName">AURA</span>
+            <span class="player-sub"><span id="blackStatus">Black</span><span class="mini-sep">·</span><span class="material" id="blackMaterial"></span></span>
+          </div>
+          <div class="captured-row" id="capturedBlack" aria-label="Pieces captured by black"></div>
+        </div>
+
+        <div class="board-wrap" id="boardWrap">
+          <div class="board-frame" id="boardFrame">
+            <div class="board-coords coords-top" aria-hidden="true">
+              <span>a</span><span>b</span><span>c</span><span>d</span><span>e</span><span>f</span><span>g</span><span>h</span>
+            </div>
+            <div class="board-stage">
+              <div class="board" id="board" role="grid" aria-label="Chess board"></div>
+              <div class="pieces" id="pieces" aria-hidden="true"></div>
+              <div class="capture-flash" id="captureFlash" aria-hidden="true"></div>
+            </div>
+            <div class="board-coords coords-bottom" aria-hidden="true">
+              <span>a</span><span>b</span><span>c</span><span>d</span><span>e</span><span>f</span><span>g</span><span>h</span>
+            </div>
+            <div class="board-coords coords-left" aria-hidden="true">
+              <span>8</span><span>7</span><span>6</span><span>5</span><span>4</span><span>3</span><span>2</span><span>1</span>
+            </div>
+            <div class="board-coords coords-right" aria-hidden="true">
+              <span>8</span><span>7</span><span>6</span><span>5</span><span>4</span><span>3</span><span>2</span><span>1</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="player-bar player-white" id="barWhite">
+          <div class="player-avatar white-avatar" aria-hidden="true">
+            <svg class="avatar-svg" viewBox="0 0 100 100"><use href="#sym-q"></use></svg>
+          </div>
+          <div class="player-meta">
+            <span class="player-name" id="whiteName">YOU</span>
+            <span class="player-sub"><span id="whiteStatus">White</span><span class="mini-sep">·</span><span class="material" id="whiteMaterial"></span></span>
+          </div>
+          <div class="captured-row" id="capturedWhite" aria-label="Pieces captured by white"></div>
+        </div>
+
+        <div class="coach" id="coach" aria-live="polite">Tap a piece to see its power.</div>
+
+        <div class="mobile-dock" id="mobileDock">
+          <button class="dock-btn" id="undoBtn" type="button" aria-label="Undo move">
+            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 8 4 12l5 4M5 12h8a6 6 0 0 1 6 6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span>Undo</span>
+          </button>
+          <button class="dock-btn" id="hintBtn" type="button" aria-label="Show a hint">
+            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4M8.6 14.6a6 6 0 1 1 6.8 0c-.9.7-1.4 1.4-1.4 2.4h-4c0-1-.5-1.7-1.4-2.4Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            <span>Hint</span>
+          </button>
+          <button class="dock-btn" id="newBtn" type="button" aria-label="New game">
+            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v16M4 12h16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <span>New</span>
+          </button>
+          <button class="dock-btn" id="tiltQuickBtn" type="button" aria-label="Toggle tilt view" aria-pressed="false">
+            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="2.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10 6h4M10.5 18h3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M3.5 8.5c-1.2 2-1.2 5 0 7M20.5 8.5c1.2 2 1.2 5 0 7" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" opacity=".7"/></svg>
+            <span>Tilt</span>
+          </button>
+        </div>
+
+        <div class="mobile-insight" id="mobileInsight">
+          <div class="insight-head">
+            <span class="eyebrow">Power swap</span>
+            <span class="insight-count" id="mobileMoveCount">0 moves</span>
+          </div>
+          <div class="insight-swap" id="mobileSwapVisual">
+            <span class="swap-icon icon-white"><svg viewBox="0 0 100 100"><use href="#sym-p"></use></svg></span>
+            <span class="swap-arrow" aria-hidden="true">→</span>
+            <span class="swap-icon icon-white"><svg viewBox="0 0 100 100"><use href="#sym-q"></use></svg></span>
+          </div>
+          <p class="insight-text" id="mobileSwapText">Every capture transfers the fallen piece's power to the survivor.</p>
+        </div>
+      </section>
+
+      <aside class="side-panel" aria-label="Match information">
+        <section class="panel-card turn-card">
+          <div class="eyebrow">Match status</div>
+          <div class="turn-title" id="turnTitle">Your move</div>
+          <p class="turn-desc" id="turnDesc">Tap a piece, then tap a highlighted square.</p>
+          <div class="thinking-dots" id="thinkingDots" aria-hidden="true"><span></span><span></span><span></span></div>
+        </section>
+
+        <section class="panel-card swap-card" id="swapCard">
+          <div class="eyebrow">Power swap</div>
+          <div class="swap-visual" id="swapVisual">
+            <span class="swap-icon icon-white"><svg viewBox="0 0 100 100"><use href="#sym-p"></use></svg></span>
+            <span class="swap-arrow" aria-hidden="true">→</span>
+            <span class="swap-icon icon-white"><svg viewBox="0 0 100 100"><use href="#sym-q"></use></svg></span>
+          </div>
+          <p class="swap-text" id="swapText">Every capture transfers the fallen piece's power to the survivor.</p>
+        </section>
+
+        <section class="panel-card log-card">
+          <div class="eyebrow">Moves</div>
+          <div class="move-log" id="moveLog"><div class="empty-log">The board is waiting.</div></div>
+        </section>
+
+        <div class="side-controls">
+          <button class="secondary-btn" id="undoDesktopBtn" type="button">Undo</button>
+          <button class="secondary-btn" id="hintDesktopBtn" type="button">Hint</button>
+          <button class="secondary-btn" id="newDesktopBtn" type="button">New game</button>
+        </div>
+      </aside>
+    </main>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </div>
+
+  <div class="landing" id="landing">
+    <div class="landing-orbit" aria-hidden="true">
+      <span class="orbit-piece op-1"><svg viewBox="0 0 100 100"><use href="#sym-n"></use></svg></span>
+      <span class="orbit-piece op-2"><svg viewBox="0 0 100 100"><use href="#sym-q"></use></svg></span>
+      <span class="orbit-piece op-3"><svg viewBox="0 0 100 100"><use href="#sym-b"></use></svg></span>
+      <span class="orbit-piece op-4"><svg viewBox="0 0 100 100"><use href="#sym-r"></use></svg></span>
+    </div>
+
+    <div class="landing-card">
+      <div class="landing-kicker"><span></span>Chess, rewritten<span></span></div>
+      <h1 class="hero-title"><span class="hero-swap">SWAP</span><span class="hero-chess">CHESS</span></h1>
+      <p class="hero-copy">Every capture swaps a piece's power. Take a queen with a pawn and your pawn becomes royalty.</p>
+
+      <div class="hero-demo" aria-label="A pawn capturing a queen becomes a queen">
+        <span class="demo-piece demo-white"><svg viewBox="0 0 100 100"><use href="#sym-p"></use></svg></span>
+        <span class="demo-caption">takes</span>
+        <span class="demo-piece demo-black"><svg viewBox="0 0 100 100"><use href="#sym-q"></use></svg></span>
+        <span class="demo-arrow" aria-hidden="true">→</span>
+        <span class="demo-piece demo-white demo-glow"><svg viewBox="0 0 100 100"><use href="#sym-q"></use></svg></span>
+      </div>
+
+      <div class="landing-options">
+        <div class="option-label">Opponent</div>
+        <div class="segmented" id="modeSeg" role="group" aria-label="Opponent">
+          <button type="button" class="seg-btn is-active" data-mode="ai">Aura <span>AI</span></button>
+          <button type="button" class="seg-btn" data-mode="local">Pass &amp; play</button>
+        </div>
+
+        <div class="option-label" id="difficultyLabel">Aura's intensity</div>
+        <div class="segmented segmented-small" id="difficultySeg" role="group" aria-label="Difficulty">
+          <button type="button" class="seg-btn" data-difficulty="easy">Calm</button>
+          <button type="button" class="seg-btn is-active" data-difficulty="medium">Sharp</button>
+          <button type="button" class="seg-btn" data-difficulty="hard">Ruthless</button>
+        </div>
+      </div>
+
+      <button class="primary-btn" id="playBtn" type="button">
+        <span>Play</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="text-btn" id="rulesBtn" type="button">How to play</button>
+    </div>
+
+    <div class="landing-foot">
+      <span class="foot-dot"></span>
+      Touch-first · optional tilt view · built for phone &amp; tablet
+    </div>
+  </div>
+
+  <div class="modal" id="rulesModal" role="dialog" aria-modal="true" aria-labelledby="rulesTitle" hidden>
+    <div class="modal-backdrop" data-close="rulesModal"></div>
+    <div class="sheet rules-sheet">
+      <div class="sheet-handle" aria-hidden="true"></div>
+      <div class="sheet-head">
+        <div>
+          <div class="eyebrow">The one rule that changes everything</div>
+          <h2 id="rulesTitle">Capture. Swap. Survive.</h2>
+        </div>
+        <button class="icon-btn close-btn" type="button" data-close="rulesModal" aria-label="Close rules">
+          <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="rules-grid">
+        <article class="rule">
+          <span class="rule-num">01</span>
+          <h3>Move like chess</h3>
+          <p>All the familiar moves are here — castling, en passant and promotion included. Tap a piece, then a highlighted square.</p>
+        </article>
+        <article class="rule">
+          <span class="rule-num">02</span>
+          <h3>Every capture is a swap</h3>
+          <p>The survivor takes the fallen piece's movement power. A pawn that takes a queen becomes a queen. A queen that takes a pawn becomes a pawn — unless that pawn would be stranded on the far rank, where it must promote instead.</p>
+        </article>
+        <article class="rule">
+          <span class="rule-num">03</span>
+          <h3>The crown stays royal</h3>
+          <p>A king keeps its crown even when its movement changes. It can become a royal knight, rook, bishop or pawn — but it is still the piece you must protect.</p>
+        </article>
+        <article class="rule">
+          <span class="rule-num">04</span>
+          <h3>Win by checkmate</h3>
+          <p>There is no capturing the king. Trap the enemy crown with no legal escape and the match is yours. Stalemate and repetition are draws.</p>
+        </article>
+      </div>
+      <div class="rules-note">
+        <span class="note-mark">✦</span>
+        <p><strong>Try the tilt view.</strong> On a phone, enable Tilt in settings to gently look around the board with your device's motion. Touch always works.</p>
+      </div>
+      <button class="primary-btn" type="button" data-close="rulesModal">Got it</button>
+    </div>
+  </div>
+
+  <div class="modal" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle" hidden>
+    <div class="modal-backdrop" data-close="settingsModal"></div>
+    <div class="sheet settings-sheet">
+      <div class="sheet-handle" aria-hidden="true"></div>
+      <div class="sheet-head">
+        <div>
+          <div class="eyebrow">Make it yours</div>
+          <h2 id="settingsTitle">Settings</h2>
+        </div>
+        <button class="icon-btn close-btn" type="button" data-close="settingsModal" aria-label="Close settings">
+          <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+
+      <div class="setting-list">
+        <label class="setting-row">
+          <span class="setting-copy"><strong>Sound</strong><span>Soft wooden clicks and capture chimes.</span></span>
+          <input type="checkbox" id="soundToggle" class="switch-input" checked>
+          <span class="switch" aria-hidden="true"></span>
+        </label>
+        <label class="setting-row">
+          <span class="setting-copy"><strong>Tilt view</strong><span>Use device motion to gently move the board. Requests motion access on iOS.</span></span>
+          <input type="checkbox" id="tiltToggle" class="switch-input">
+          <span class="switch" aria-hidden="true"></span>
+        </label>
+        <label class="setting-row">
+          <span class="setting-copy"><strong>Flip board each turn</strong><span>Pass &amp; play only. Rotate to face the player on move.</span></span>
+          <input type="checkbox" id="autoFlipToggle" class="switch-input">
+          <span class="switch" aria-hidden="true"></span>
+        </label>
+        <label class="setting-row">
+          <span class="setting-copy"><strong>Coordinates</strong><span>Show files and ranks around the board.</span></span>
+          <input type="checkbox" id="coordsToggle" class="switch-input" checked>
+          <span class="switch" aria-hidden="true"></span>
+        </label>
+        <label class="setting-row">
+          <span class="setting-copy"><strong>Reduce motion</strong><span>Fewer animations and no screen shake.</span></span>
+          <input type="checkbox" id="motionToggle" class="switch-input">
+          <span class="switch" aria-hidden="true"></span>
+        </label>
+      </div>
+
+      <div class="settings-actions">
+        <button class="secondary-btn" id="calibrateBtn" type="button">Calibrate tilt</button>
+        <button class="secondary-btn" id="flipBtn" type="button">Flip board</button>
+      </div>
+      <p class="settings-note" id="tiltStatus">Tilt is optional. Touch controls always work.</p>
+    </div>
+  </div>
+
+  <div class="modal" id="promoModal" role="dialog" aria-modal="true" aria-labelledby="promoTitle" hidden>
+    <div class="modal-backdrop"></div>
+    <div class="sheet promo-sheet">
+      <div class="sheet-handle" aria-hidden="true"></div>
+      <div class="eyebrow">A power reborn</div>
+      <h2 id="promoTitle">Choose your promotion</h2>
+      <p class="promo-copy" id="promoCopy">Your pawn reached the far rank. What does it become?</p>
+      <div class="promo-grid" id="promoGrid"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="confirmModal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle" hidden>
+    <div class="modal-backdrop" data-close="confirmModal"></div>
+    <div class="sheet confirm-sheet">
+      <div class="sheet-handle" aria-hidden="true"></div>
+      <div class="eyebrow">Fresh board</div>
+      <h2 id="confirmTitle">Start over?</h2>
+      <p class="confirm-copy">The current match will be cleared. Your settings stay just the way you like them.</p>
+      <div class="confirm-actions">
+        <button class="secondary-btn" type="button" data-close="confirmModal">Keep playing</button>
+        <button class="primary-btn" id="confirmNewBtn" type="button">New game</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal game-over" id="gameOverModal" role="dialog" aria-modal="true" aria-labelledby="gameOverTitle" hidden>
+    <div class="modal-backdrop"></div>
+    <div class="sheet gameover-sheet">
+      <div class="result-crown" id="resultCrown" aria-hidden="true">
+        <svg viewBox="0 0 100 100"><use href="#sym-k"></use></svg>
+      </div>
+      <div class="eyebrow" id="gameOverKicker">Match complete</div>
+      <h2 id="gameOverTitle">Checkmate</h2>
+      <p class="gameover-copy" id="gameOverCopy">A brilliant finish.</p>
+      <div class="result-stats">
+        <div><span id="statMoves">0</span><small>moves</small></div>
+        <div><span id="statSwaps">0</span><small>power swaps</small></div>
+        <div><span id="statTime">0:00</span><small>time</small></div>
+      </div>
+      <div class="confirm-actions">
+        <button class="secondary-btn" id="reviewBtn" type="button">Review board</button>
+        <button class="primary-btn" id="rematchBtn" type="button">Rematch</button>
+      </div>
+    </div>
+  </div>
+
+  <canvas class="fx-canvas" id="fxCanvas" aria-hidden="true"></canvas>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
