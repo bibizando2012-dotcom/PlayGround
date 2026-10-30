@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>Rabbit Lab</title>
+<style>
+  html,body{margin:0;height:100%;overflow:hidden;background:#1b1712;font-family:ui-sans-serif,system-ui,sans-serif;color:#f3e9d8}
+  #app{position:fixed;inset:0}
+  #hud{position:fixed;left:16px;bottom:16px;display:flex;gap:8px;flex-wrap:wrap;max-width:70vw}
+  button{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.18);color:#fff;padding:8px 12px;border-radius:9px;font:inherit;cursor:pointer;backdrop-filter:blur(8px)}
+  button:hover{background:rgba(255,255,255,.16)}
+  #label{position:fixed;left:16px;top:16px;font-size:12px;letter-spacing:.18em;text-transform:uppercase;opacity:.7}
+  #stats{position:fixed;right:16px;top:16px;font-size:12px;opacity:.7;text-align:right;font-variant-numeric:tabular-nums}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="label">Rabbit lab · procedural GLB</div>
+<div id="stats"></div>
+<div id="hud">
+  <button data-q="6">6 shells</button>
+  <button data-q="10">10</button>
+  <button data-q="14">14</button>
+  <button data-q="20">20</button>
+  <button id="toggleFur">fur on/off</button>
+  <button id="toggleSpin">spin</button>
+  <button id="toggleCam">close-up</button>
+</div>
+<script type="module" src="/src/lab.js"></script>
+</body>
+</html>
