@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#1c2a21">
+  <meta name="description" content="Harebell — a quiet rabbit sandbox. Wander a sunlit meadow, twitch your ears, and go nowhere in particular.">
+  <title>Harebell — a quiet little sandbox</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%231c2a21'/%3E%3Cpath d='M24 13c-2 12 1 24 7 31M40 13c2 12-1 24-7 31' stroke='%23e9cfa7' stroke-width='4' fill='none' stroke-linecap='round'/%3E%3Cellipse cx='32' cy='42' rx='11' ry='12' fill='%23e9cfa7'/%3E%3C/svg%3E">
+  <link rel="preload" href="assets/fonts/cormorant-regular.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="preload" href="assets/fonts/manrope-regular.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main id="app">
+    <canvas id="world" aria-label="A sunlit meadow. You are a rabbit with tall, listening ears."></canvas>
+    <div class="atmosphere" aria-hidden="true">
+      <div class="vignette"></div>
+      <div class="grain"></div>
+    </div>
+
+    <header class="topbar" id="topbar">
+      <a class="wordmark" href="#" aria-label="Harebell meadow">
+        <svg viewBox="0 0 28 28" aria-hidden="true"><path d="M9.5 4.4C8 10 9.5 16.8 14 20.1M18.5 4.4C20 10 18.5 16.8 14 20.1" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M14 17.5c-4.2 0-6.7 2.7-6.7 5.2 0 2.1 2.3 3.3 6.7 3.3s6.7-1.2 6.7-3.3c0-2.5-2.5-5.2-6.7-5.2Z" fill="currentColor"/></svg>
+        <span>Harebell</span>
+      </a>
+      <div class="topbar-side">
+        <span class="place">Meadow № 07</span>
+        <span class="sky-state"><i></i><span id="time-label">golden hour</span></span>
+      </div>
+    </header>
+
+    <section class="intro" id="intro" aria-labelledby="intro-title">
+      <div class="intro-copy">
+        <p class="eyebrow"><span></span>A quiet little sandbox</p>
+        <h1 id="intro-title"><span>Hare</span><span class="italic">bell</span></h1>
+        <p class="lede">No quests. No clocks.<br>Just a meadow, and ears that<br class="wide-only"> hear the wind.</p>
+        <div class="intro-actions">
+          <button class="play-button" id="play" type="button" aria-label="Play">
+            <span>Play</span>
+            <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 16h20M18 8l8 8-8 8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="tilt-chip" id="intro-tilt" type="button" aria-pressed="false">
+            <span class="chip-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2.2" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M9.5 5.5h5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            </span>
+            <span class="chip-copy"><b>Tilt to wander</b><small id="tilt-note">Optional motion steering</small></span>
+            <span class="switch" aria-hidden="true"><i></i></span>
+          </button>
+        </div>
+        <p class="intro-foot"><span class="dot"></span>Best with sound <span class="sep">·</span> touch to wander</p>
+        <p class="credit">Rabbit by <a href="https://sketchfab.com/Dakota.Hinkle" target="_blank" rel="noreferrer">Dakota.Hinkle</a> <span class="sep">·</span> <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">CC BY 4.0</a></p>
+      </div>
+      <div class="intro-aside" aria-hidden="true">
+        <div class="field-note">
+          <span class="note-line"></span>
+          <p>Wind from the<br>south-west</p>
+          <small>18°C &nbsp;·&nbsp; clover in bloom</small>
+        </div>
+        <div class="scroll-cue">
+          <span>wander in</span><i></i>
+        </div>
+      </div>
+    </section>
+
+    <div class="hud" id="hud" aria-hidden="true">
+      <div class="hud-tools">
+        <button class="round-tool" id="sound" type="button" aria-label="Mute sound" aria-pressed="true">
+          <svg class="sound-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5v5h3.2l4.5 3.6V5.9L7.2 9.5H4Z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M15 8.7c1.5 1.7 1.5 4.9 0 6.6M17.6 6.2c2.9 3.1 2.9 8.5 0 11.6" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+          <svg class="sound-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5v5h3.2l4.5 3.6V5.9L7.2 9.5H4Z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="m15.5 9.5 5 5m0-5-5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        </button>
+        <button class="round-tool" id="hud-tilt" type="button" aria-label="Enable tilt steering" aria-pressed="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2.2" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M9.5 5.5h5M9 19h6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        </button>
+        <button class="round-tool" id="photo" type="button" aria-label="Hide interface" aria-pressed="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8.5h3l1.5-2h7l1.5 2h3v10H4v-10Z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><circle cx="12" cy="13" r="3.1" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>
+        </button>
+      </div>
+
+      <div class="place-card" id="place-card">
+        <span class="place-rule"></span>
+        <p id="place-name">The Long Grass</p>
+        <small>sandbox · no objectives</small>
+      </div>
+
+      <div class="touch-layer" id="touch-layer">
+        <div class="stick-zone" id="stick-zone" aria-hidden="true">
+          <div class="stick" id="stick">
+            <div class="stick-ring"></div>
+            <div class="stick-knob"><span></span></div>
+          </div>
+          <span class="stick-label">wander</span>
+        </div>
+        <div class="action-zone">
+          <button class="hop-button" id="hop" type="button" aria-label="Hop">
+            <span class="hop-arc"></span>
+            <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M12 27c0-6 4.5-11 11.5-15.5M27 18.5c-1.5-3.5-1-7 2-9M23 26c3.5-2 7-1.5 9 1" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M12 27c-2.5 1-4.5 3-5 5.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            <b>Hop</b>
+          </button>
+          <span class="hop-label">space</span>
+        </div>
+      </div>
+
+      <div class="hint" id="hint"><span class="hint-line"></span><span id="hint-text">Drag to look around</span></div>
+      <button class="photo-exit" id="photo-exit" type="button" aria-label="Show interface">Show interface</button>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite">
+      <span class="toast-icon"></span>
+      <span id="toast-text"></span>
+    </div>
+
+    <div class="loader" id="loader">
+      <div class="loader-mark">
+        <svg viewBox="0 0 44 44" aria-hidden="true"><path d="M15 7c-2.5 9 0 19 7 24M29 7c2.5 9 0 19-7 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="22" cy="35" r="4" fill="currentColor"/></svg>
+      </div>
+      <div class="loader-copy"><span>Waking the meadow</span><i><b id="loader-bar"></b></i></div>
+    </div>
+
+    <div class="rotate-note">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="9" y="3" width="14" height="26" rx="3" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M5 15a11 11 0 0 1 2-6M27 17a11 11 0 0 1-2 6" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      <p>Turn your device sideways<br><span>for a wider meadow</span></p>
+    </div>
+  </main>
+
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "./vendor/three/build/three.module.js",
+        "three/addons/": "./vendor/three/examples/jsm/"
+      }
+    }
+  </script>
+  <script type="module" src="main.js"></script>
+</body>
+</html>
