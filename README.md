@@ -1,4 +1,20 @@
-# PlayGround
+# CATastrophe: Little Paws, Big City
+
+A third-person 3D city sandbox starring Marmalade, an orange cat with an appetite for chaos and affection.
+
+## Play
+
+Open `index.html` in a modern browser, or serve this folder from a local web server. The game loads Three.js from jsDelivr, so an internet connection is needed.
+
+- **WASD / arrow keys** — prowl
+- **Shift** — sprint
+- **Space** — hop
+- **E** — swat nearby props or people
+- **Q** — meow (neighbors come over for a cuddle)
+- **F** — refill lives and energy at home
+- **Drag the mouse** — look around
+
+Break things to earn chaos points and attract police and their dogs. Head home for a safe reset; Marmalade always gets another chance.
 
 <!-- omgithub:readme:start -->
 ## 🚀 Build, play, and remix with OMGithub
