@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <meta name="theme-color" content="#8fd1e8" />
+  <title>Blockbound — a tiny open world</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="game-root">
+    <canvas id="world" aria-label="Blockbound game world"></canvas>
+    <div class="topbar">
+      <a class="brand" href="#" aria-label="Blockbound home"><span class="brand-mark"><i></i><i></i><i></i></span><span>BLOCKBOUND</span></a>
+      <div class="top-center"><span class="world-dot"></span><span>THE OVERGROWN</span><span class="divider">/</span><span id="coords">X 0&nbsp; Y 0&nbsp; Z 0</span></div>
+      <button id="sound-toggle" class="icon-button" title="Toggle ambience" aria-label="Toggle sound">♫</button>
+    </div>
+    <div class="hud">
+      <div class="status-row">
+        <div class="hearts" id="hearts" aria-label="Health"></div>
+        <div class="status-pill"><span class="sun-icon">☀</span><span id="clock">DAY 01 · 08:00</span></div>
+        <div class="hunger" id="hunger" aria-label="Energy"></div>
+      </div>
+      <div class="hint" id="hint"><span class="hint-key">W A S D</span> move <span class="hint-sep">·</span><span class="hint-key">SPACE</span> jump <span class="hint-sep">·</span><span class="hint-key">SHIFT</span> sprint</div>
+      <div class="crosshair"><span></span><span></span></div>
+      <div class="target-name" id="target-name"></div>
+      <div class="inventory"><div class="inventory-label">QUICK INVENTORY <span class="keycap">SCROLL</span></div><div class="hotbar" id="hotbar"></div></div>
+      <div class="bottom-note"><span>AN EXPERIMENT IN SMALL WORLDS</span><span id="block-count">0 BLOCKS DISCOVERED</span></div>
+    </div>
+    <div class="toast" id="toast"></div>
+    <div class="overlay" id="overlay">
+      <div class="modal-card">
+        <div class="eyebrow"><span class="eyebrow-line"></span> YOUR OWN LITTLE WORLD</div>
+        <h1>Make a place<br>to <em>stay awhile.</em></h1>
+        <p class="intro-copy">Wander through a quiet, block-built wilderness. Gather what you need, shape the land, and leave the world a little more yours.</p>
+        <button id="play-button" class="play-button"><span>STEP INTO THE WORLD</span><span class="button-arrow">↗</span></button>
+        <div class="control-list"><span><b>WASD</b> move</span><span><b>CLICK</b> mine / place</span><span><b>1–7</b> choose block</span></div>
+        <div class="modal-footer"><span>BLOCKBOUND <span class="footer-dot">·</span> A VOXEL SANDBOX</span><span>NO TWO WALKS ALIKE</span></div>
+      </div>
+      <div class="modal-side-note">01 — THE OVERGROWN <span>✳</span> EST. THIS MOMENT</div>
+    </div>
+    <div class="pause-badge" id="pause-badge"><span>Ⅱ</span> PAUSED <small>CLICK TO RETURN</small></div>
+  </div>
+  <script type="module" src="game.js"></script>
+</body>
+</html>
